@@ -1,3 +1,6 @@
+#ifndef _VECTOR_H
+#define _VECTOR_H
+
 #include <stdlib.h>
 #include <string.h>
 #define VECTOR(T)\
@@ -67,3 +70,5 @@ void vector_remove_##T(vector_##T* self, size_t idx) {\
         self->len--;\
     }\
 }
+
+#endif
