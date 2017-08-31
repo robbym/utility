@@ -3,13 +3,24 @@
 
 #include <stdlib.h>
 #include <string.h>
-#define VECTOR(T)\
+
+#define VECTOR_DEF(T)\
 typedef struct {\
     size_t cap;\
     size_t len;\
     T* data;\
 } vector_##T;\
-\
+vector_##T vector_init_##T();\
+void vector_free_##T(vector_##T* self);\
+void vector_push_##T(vector_##T* self, T val);\
+T vector_pop_##T(vector_##T* self);\
+void vector_clear_##T(vector_##T* self);\
+void vector_shrink_##T(vector_##T* self);\
+void vector_insert_##T(vector_##T* self, size_t idx, T val);\
+void vector_remove_##T(vector_##T* self, size_t idx);\
+void vector_sort_##T(vector_##T* self, int (*compare) (T*, T*));\
+    
+#define VECTOR(T)\
 vector_##T vector_init_##T() {\
     void* data = malloc(sizeof(T) * (1 << 4));\
     return (vector_##T) {\
@@ -41,6 +52,7 @@ T vector_pop_##T(vector_##T* self) {\
         self->len--;\
         return val;\
     }\
+    return (T){0};\
 }\
 \
 void vector_clear_##T(vector_##T* self) {\
@@ -71,7 +83,7 @@ void vector_remove_##T(vector_##T* self, size_t idx) {\
     }\
 }\
 \
-static T* partition(T* left, T* right, int (*compare) (T*, T*)) {\
+static T* partition_##T(T* left, T* right, int (*compare) (T*, T*)) {\
     T* pivot = left;\
     left--;\
     right++;\
@@ -85,16 +97,16 @@ static T* partition(T* left, T* right, int (*compare) (T*, T*)) {\
     }\
 }\
 \
-static void quicksort(T* left, T* right, int (*compare) (T*, T*)) {\
+static void quicksort_##T(T* left, T* right, int (*compare) (T*, T*)) {\
     if (left < right) {\
-        T* p = partition(left, right, compare);\
-        quicksort(left, p, compare);\
-        quicksort(p+1, right, compare);\
+        T* p = partition_##T(left, right, compare);\
+        quicksort_##T(left, p, compare);\
+        quicksort_##T(p+1, right, compare);\
     }\
 }\
 \
 void vector_sort_##T(vector_##T* self, int (*compare) (T*, T*)) {\
-    quicksort(&self->data[0], &self->data[self->len - 1], compare);\
+    quicksort_##T(&self->data[0], &self->data[self->len - 1], compare);\
 }\
 
 #endif
